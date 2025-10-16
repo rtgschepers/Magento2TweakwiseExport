@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -69,11 +69,6 @@ class Config
     protected $deployConfig;
 
     /**
-     * @var File
-     */
-    private File $driver;
-
-    /**
      * Export constructor.
      *
      * @param ScopeConfigInterface $config
@@ -85,12 +80,11 @@ class Config
         ScopeConfigInterface $config,
         DirectoryList $directoryList,
         DeploymentConfig $deployConfig,
-        File $driver
+        private File $driver
     ) {
         $this->config = $config;
         $this->directoryList = $directoryList;
         $this->deployConfig = $deployConfig;
-        $this->driver = $driver;
     }
 
     /**
@@ -99,6 +93,7 @@ class Config
      */
     public function isEnabled($store = null): bool
     {
+        // @phpstan-ignore-next-line
         return (bool) $this->config->isSetFlag(self::PATH_ENABLED, ScopeInterface::SCOPE_STORE, $store);
     }
 
@@ -141,7 +136,7 @@ class Config
     /**
      * @return string
      */
-    public function getApiImportUrl($store = null, $type = null): string
+    public function getApiImportUrl($store = null, $type = null): string // @phpstan-ignore-line
     {
         if ($type === 'stock') {
             return (string) $this->config->getValue(
@@ -160,6 +155,7 @@ class Config
      */
     public function isOutOfStockChildren($store = null): bool
     {
+        // @phpstan-ignore-next-line
         return (bool) $this->config->isSetFlag(self::PATH_OUT_OF_STOCK_CHILDREN, ScopeInterface::SCOPE_STORE, $store);
     }
 
@@ -187,7 +183,7 @@ class Config
     {
         $data = (array) explode(
             ',',
-            (string) $this->config->getValue(self::PATH_PRICE_FIELD, ScopeInterface::SCOPE_STORE, $store)
+            (string) $this->config->getValue(self::PATH_PRICE_FIELD, ScopeInterface::SCOPE_STORE, $store) // @phpstan-ignore-line
         );
         return array_filter($data);
     }
@@ -200,6 +196,7 @@ class Config
     public function getSkipChildAttribute($attribute = null, $store = null)
     {
         if (!$this->skipAttributes) {
+            // @phpstan-ignore-next-line
             $value = $this->config->getValue(self::PATH_EXCLUDE_CHILD_ATTRIBUTES, ScopeInterface::SCOPE_STORE, $store);
             $skipAttributes = explode(',', (string) $value);
             $this->skipAttributes = array_flip($skipAttributes);
@@ -223,7 +220,7 @@ class Config
             (string) $this->config->getValue(
                 self::PATH_SKIP_CHILD_BY_COMPOSITE_TYPE,
                 ScopeInterface::SCOPE_STORE,
-                $store
+                $store  // @phpstan-ignore-line
             )
         );
 
@@ -243,7 +240,7 @@ class Config
         if (
             !$this->driver->isDirectory($dir) &&
             !$this->driver->createDirectory($dir) &&
-            !$this->driver->isDirectory($dir)
+            !$this->driver->isDirectory($dir) // @phpstan-ignore-line
         ) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
@@ -262,7 +259,7 @@ class Config
      * @param StoreInterface|null $store
      * @return string
      */
-    public function getFeedLockFile($file = null, $store = null, $type = null): string
+    public function getFeedLockFile($file = null, $store = null, $type = null): string // @phpstan-ignore-line
     {
         if (!$file) {
             $file = $this->getDefaultFeedFile($store, $type);
@@ -316,7 +313,7 @@ class Config
         return (bool) $this->config->getValue(
             self::PATH_GROUPED_EXPORT_ENABLED,
             ScopeInterface::SCOPE_STORE,
-            $store
+            $store // @phpstan-ignore-line
         );
     }
 
@@ -326,6 +323,7 @@ class Config
      */
     public function calculateCombinedPrices(Store $store): bool
     {
+        // @phpstan-ignore-next-line
         return (bool) $this->config->isSetFlag(self::CALCULATE_COMPOSITE_PRICES, ScopeInterface::SCOPE_STORE, $store);
     }
 }

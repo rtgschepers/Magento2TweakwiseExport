@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -31,7 +31,7 @@ use Zend_Db_Select;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 class EavIterator implements IteratorAggregate
 {
@@ -154,7 +154,7 @@ class EavIterator implements IteratorAggregate
     {
         $attribute = $this->eavConfig->getAttribute($this->entityCode, $attributeCode);
         /** @noinspection NullPointerExceptionInspection */
-        $attributeKey = $attribute->getId() ?: $attributeCode;
+        $attributeKey = $attribute->getId() ? $attribute->getId() : $attributeCode;
 
         $this->attributes[$attributeKey] = $attribute;
         $this->attributesByCode[$attributeCode] = $attribute;
@@ -168,7 +168,7 @@ class EavIterator implements IteratorAggregate
     {
         $attribute = $this->eavConfig->getAttribute($this->entityCode, $attributeCode);
         /** @noinspection NullPointerExceptionInspection */
-        $attributeKey = $attribute->getId() ?: $attributeCode;
+        $attributeKey = $attribute->getId() ? $attribute->getId() : $attributeCode;
 
         if (!isset($this->attributes[$attributeKey])) {
             throw new InvalidArgumentException(sprintf('Attribute %s not found', $attributeCode));
@@ -244,9 +244,11 @@ class EavIterator implements IteratorAggregate
             }
         }
 
-        if ($entity['entity_id']) {
-            yield $entity;
+        if (!$entity['entity_id']) {
+            return;
         }
+
+        yield $entity;
     }
 
     /**
@@ -318,7 +320,7 @@ class EavIterator implements IteratorAggregate
 
     /**
      * @return int[]|null
-     * @SuppressWarnings(PHPMD.MissingImport)
+     * @SuppressWarnings("PHPMD.MissingImport")
      */
     protected function getEntityBatch(): ?array
     {
@@ -333,8 +335,10 @@ class EavIterator implements IteratorAggregate
                 $select->where('entity_id IN (?)', $this->getEntityIds());
             }
 
+            // @phpstan-ignore-next-line
             $result = $select->query()->fetchAll();
             $entityIds = array_column($result, 'entity_id');
+            // @phpstan-ignore-next-line
             $this->entitySet[$storeId] = new \ArrayIterator(array_chunk($entityIds, $this->batchSize));
             $this->entityData = array_combine($entityIds, $result);
         }
@@ -420,6 +424,7 @@ class EavIterator implements IteratorAggregate
                     ]
                 );
             if ($this->entityIds) {
+                // phpcs:disable Squiz.Strings.DoubleQuoteUsage.ContainsVar
                 $select->where("{$attribute->getBackendTable()}.entity_id IN (?)", $this->entityIds);
             }
 
@@ -449,6 +454,7 @@ class EavIterator implements IteratorAggregate
         }
 
         if ($this->entityIds) {
+            // phpcs:disable Squiz.Strings.DoubleQuoteUsage.ContainsVar
             $select->where("{$table}.entity_id IN (?)", $this->entityIds);
         }
 

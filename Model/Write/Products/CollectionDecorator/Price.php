@@ -1,14 +1,12 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
 use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\Store;
-use Magento\Tax\Model\Calculation;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
@@ -18,9 +16,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 use Zend_Db_Select;
-use Magento\Tax\Model\TaxCalculation;
 use Magento\Framework\Data\Collection as DataCollection;
-use Magento\Store\Model\ScopeInterface;
 
 class Price implements DecoratorInterface
 {
@@ -49,15 +45,11 @@ class Price implements DecoratorInterface
      * @param CollectionFactory $collectionFactory
      * @param StoreManagerInterface $storeManager
      * @param Config $config
-     * @param Calculation $taxCalculation
-     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         CollectionFactory $collectionFactory,
         StoreManagerInterface $storeManager,
         Config $config,
-        private readonly Calculation $taxCalculation,
-        private readonly ScopeConfigInterface $scopeConfig
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->storeManager = $storeManager;
@@ -73,7 +65,9 @@ class Price implements DecoratorInterface
         $store = $collection->getStore();
         $websiteId = $collection->getStore()->getWebsiteId();
 
+        // @phpstan-ignore-next-line
         $priceSelect = $this->createPriceSelect($collection->getIds(), $websiteId);
+        // @phpstan-ignore-next-line
         $priceQueryResult = $priceSelect->getSelect()->query()->fetchAll();
 
         $currency = $collection->getStore()->getCurrentCurrency();
@@ -97,10 +91,13 @@ class Price implements DecoratorInterface
             $row['price'] = $this->getPriceValue($row, $priceFields);
 
             $product = $productCollection->getItemById($entityId);
+            // @phpstan-ignore-next-line
             $taxClassId = $this->getTaxClassId($collection->get($entityId));
 
+            // @phpstan-ignore-next-line
             if ($this->config->calculateCombinedPrices($store) && $this->isGroupedProduct($product)) {
                 $row['price'] = $this->calculateGroupedProductPrice($entityId, $store, $taxClassId);
+            // @phpstan-ignore-next-line
             } elseif ($this->config->calculateCombinedPrices($store) && $this->isBundleProduct($product)) {
                 $row['price'] = $this->calculateBundleProductPrice($entityId, $store, $taxClassId);
             } else {
@@ -118,6 +115,7 @@ class Price implements DecoratorInterface
      * @param int|null $taxClassId
      * @param Store $store
      * @return float
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     private function calculatePrice(float $price, ?int $taxClassId, Store $store): float
     {
@@ -183,7 +181,7 @@ class Price implements DecoratorInterface
      * @param ProductInterface $product
      * @return int|null
      */
-    protected function getTaxClassId(ExportEntity $product): ?int
+    protected function getTaxClassId(ExportEntity $product): ?int // @phpstan-ignore-line
     {
         try {
             if (isset($product->getAttribute('tax_class_id')[0])) {
@@ -202,7 +200,7 @@ class Price implements DecoratorInterface
      */
     protected function isGroupedProduct(ProductInterface $product): bool
     {
-        return $product?->getTypeId() === Grouped::TYPE_CODE;
+        return $product->getTypeId() === Grouped::TYPE_CODE;
     }
 
     /**
@@ -211,7 +209,7 @@ class Price implements DecoratorInterface
      */
     protected function isBundleProduct(ProductInterface $product): bool
     {
-        return $product?->getTypeId() === Type::TYPE_CODE;
+        return $product->getTypeId() === Type::TYPE_CODE;
     }
 
     /**

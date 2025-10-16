@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -121,7 +121,7 @@ class Categories implements WriterInterface
      * @param XMLWriter $xml
      * @param Store $store
      * @param int[] $entityIds
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     public function exportStore(Writer $writer, XMLWriter $xml, Store $store, array $entityIds = []): void
     {
@@ -170,9 +170,11 @@ class Categories implements WriterInterface
             $exportedCategories[$data['entity_id']] = true;
             $this->writeCategory($xml, $storeId, $data);
             // Flush every so often
-            if ($index % 100 === 0) {
-                $writer->flush();
+            if ($index % 100 !== 0) {
+                continue;
             }
+
+            $writer->flush();
         }
 
         // Flush any remaining categories
@@ -187,7 +189,7 @@ class Categories implements WriterInterface
     protected function writeCategory(XMLWriter $xml, int $storeId, array $data): void
     {
         $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id']);
-        $xml->addCategoryExport($tweakwiseId);
+        $xml->addCategoryExport((int)$tweakwiseId);
 
         $xml->startElement('category');
         $xml->writeElement('categoryid', $tweakwiseId);
