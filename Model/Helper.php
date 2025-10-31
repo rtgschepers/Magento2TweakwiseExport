@@ -11,6 +11,8 @@ namespace Tweakwise\Magento2TweakwiseExport\Model;
 
 use DateTime;
 use IntlDateFormatter;
+use Magento\Eav\Api\AttributeSetRepositoryInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use SplFileInfo;
 use Magento\Framework\App\ProductMetadata as CommunityProductMetadata;
 use Magento\Framework\App\ProductMetadataInterface;
@@ -34,16 +36,25 @@ class Helper
     protected $localDate;
 
     /**
+     * @var array|null
+     */
+    protected static ?array $attributeSetNames = null;
+
+    /**
      * Helper constructor.
      *
      * @param ProductMetadataInterface $productMetadata
      * @param Config $config
      * @param TimezoneInterface $localDate
+     * @param AttributeSetRepositoryInterface $attributeSetRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         ProductMetadataInterface $productMetadata,
         Config $config,
-        TimezoneInterface $localDate
+        TimezoneInterface $localDate,
+        protected readonly AttributeSetRepositoryInterface $attributeSetRepository,
+        protected readonly SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->productMetadata = $productMetadata;
         $this->config = $config;
@@ -148,5 +159,26 @@ class Helper
         }
 
         return __('Export never triggered.');
+    }
+
+    /**
+     * Load attribute set names and cache them in a static variable
+     *
+     * @return array
+     */
+    public function getAttributeSetNames(): array
+    {
+        if (self::$attributeSetNames !== null) {
+            return self::$attributeSetNames;
+        }
+
+        $searchCriteria = $this->searchCriteriaBuilder->create();
+        $attributeSets = $this->attributeSetRepository->getList($searchCriteria)->getItems();
+
+        foreach ($attributeSets as $attributeSet) {
+            self::$attributeSetNames[$attributeSet->getAttributeSetId()] = $attributeSet->getAttributeSetName();
+        }
+
+        return self::$attributeSetNames;
     }
 }

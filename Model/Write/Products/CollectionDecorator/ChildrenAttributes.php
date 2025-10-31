@@ -52,6 +52,11 @@ class ChildrenAttributes implements DecoratorInterface
                         continue;
                     }
 
+                    if (in_array($attributeData['attribute'], $this->config->getDateAttributes(), true)) {
+                        $exportEntity->addDate($attributeData['attribute'], $attributeData['value']);
+                        continue;
+                    }
+
                     $exportEntity->addAttribute($attributeData['attribute'], $attributeData['value']);
                 }
             }

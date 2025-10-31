@@ -328,7 +328,7 @@ class EavIterator implements IteratorAggregate
         if (!isset($this->entitySet[$storeId])) {
             $select = $this->getConnection()->select();
             $select->from($this->getEntityType()->getEntityTable());
-            $select->reset('columns')->columns(['entity_id', 'created_at', 'updated_at']);
+            $select->reset('columns')->columns(['entity_id', 'created_at', 'updated_at', 'attribute_set_id']);
             $this->addEntityBatchOrder($select);
 
             if ($this->getEntityIds()) {

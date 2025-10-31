@@ -235,7 +235,7 @@ class Categories implements WriterInterface
             ]
         );
         if ($rewrite) {
-            return $this->url->getDirectUrl($rewrite->getRequestPath());
+            return rtrim($store->getBaseUrl(), '/') . '/' . ltrim($rewrite->getRequestPath(), '/');
         }
 
         return null;

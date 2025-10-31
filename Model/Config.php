@@ -42,6 +42,7 @@ class Config
     public const PATH_SKIP_CHILD_BY_COMPOSITE_TYPE = 'tweakwise/export/skip_child_by_composite_type';
     public const CALCULATE_COMPOSITE_PRICES = 'tweakwise/export/calculate_composite_prices';
     public const PATH_GROUPED_EXPORT_ENABLED = 'tweakwise/export/grouped_export_enabled';
+    public const PATH_DATE_FIELD = 'tweakwise/export/date_field';
 
     /**
      * Default feed filename
@@ -318,12 +319,28 @@ class Config
     }
 
     /**
-     * @param Store $store
+     * @param StoreInterface|null $store
      * @return bool
      */
-    public function calculateCombinedPrices(Store $store): bool
+    public function calculateCombinedPrices(?StoreInterface $store = null): bool
     {
         // @phpstan-ignore-next-line
         return (bool) $this->config->isSetFlag(self::CALCULATE_COMPOSITE_PRICES, ScopeInterface::SCOPE_STORE, $store);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateField(): string
+    {
+        return (string) $this->config->getValue(self::PATH_DATE_FIELD);
+    }
+
+    /**
+     * @return array
+     */
+    public function getDateAttributes(): array
+    {
+        return ['created_at', 'updated_at'];
     }
 }
