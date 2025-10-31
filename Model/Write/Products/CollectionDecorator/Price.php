@@ -1,5 +1,6 @@
 <?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
+
 declare(strict_types=1);
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
@@ -65,7 +66,6 @@ class Price implements DecoratorInterface
         $store = $collection->getStore();
         $websiteId = $store->getWebsiteId();
 
-        // @phpstan-ignore-next-line
         $priceSelect = $this->createPriceSelect($collection->getIds(), (int)$websiteId);
         // @phpstan-ignore-next-line
         $priceQueryResult = $priceSelect->getSelect()->query()->fetchAll();
@@ -98,7 +98,6 @@ class Price implements DecoratorInterface
      * @param DataObject $product
      * @param Store $store
      * @return array
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     private function applyCombinedPrices(array $row, DataObject $product, Store $store): array
     {
@@ -276,8 +275,9 @@ class Price implements DecoratorInterface
             return $price;
         }
 
+        // @phpstan-ignore-next-line
         $selections = $product->getTypeInstance()->getSelectionsCollection(
-            $product->getTypeInstance()->getOptionsIds($product),
+            $product->getTypeInstance()->getOptionsIds($product), // @phpstan-ignore-line
             $product
         );
 

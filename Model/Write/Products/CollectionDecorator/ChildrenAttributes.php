@@ -53,6 +53,7 @@ class ChildrenAttributes implements DecoratorInterface
                     }
 
                     if (in_array($attributeData['attribute'], $this->config->getDateAttributes(), true)) {
+                        // @phpstan-ignore-next-line
                         $exportEntity->addDate($attributeData['attribute'], $attributeData['value']);
                         continue;
                     }
