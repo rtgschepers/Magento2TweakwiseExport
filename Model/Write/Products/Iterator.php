@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -100,14 +100,16 @@ class Iterator extends EavIterator
 
             $batch->add($entity);
 
-            if ($batch->count() === $this->batchSize) {
-                // After PHP7+ we can use yield from
-                foreach ($this->processBatch($batch) as $processedEntity) {
-                    yield $processedEntity;
-                }
-
-                $batch = $this->collectionFactory->create(['store' => $this->store]);
+            if ($batch->count() !== $this->batchSize) {
+                continue;
             }
+
+            // After PHP7+ we can use yield from
+            foreach ($this->processBatch($batch) as $processedEntity) {
+                yield $processedEntity;
+            }
+
+            $batch = $this->collectionFactory->create(['store' => $this->store]);
         }
 
         // After PHP7+ we can use yield from

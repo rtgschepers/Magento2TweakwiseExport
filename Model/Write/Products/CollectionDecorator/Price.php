@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+
 
 declare(strict_types=1);
 
@@ -8,6 +9,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecor
 use Magento\Bundle\Model\Product\Type;
 use Magento\Framework\DataObject;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
+use Magento\Store\Model\Store;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
@@ -16,7 +18,6 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Db_Select;
 use Magento\Framework\Data\Collection as DataCollection;
-use Magento\Store\Model\Store;
 
 class Price implements DecoratorInterface
 {
@@ -66,6 +67,7 @@ class Price implements DecoratorInterface
         $websiteId = $store->getWebsiteId();
 
         $priceSelect = $this->createPriceSelect($collection->getIds(), (int)$websiteId);
+        // @phpstan-ignore-next-line
         $priceQueryResult = $priceSelect->getSelect()->query()->fetchAll();
 
         $currency = $store->getCurrentCurrency();
@@ -190,7 +192,7 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param DataObject$product
+     * @param DataObject $product
      * @return bool
      */
     protected function isGroupedProduct(DataObject $product): bool
@@ -273,8 +275,9 @@ class Price implements DecoratorInterface
             return $price;
         }
 
+        // @phpstan-ignore-next-line
         $selections = $product->getTypeInstance()->getSelectionsCollection(
-            $product->getTypeInstance()->getOptionsIds($product),
+            $product->getTypeInstance()->getOptionsIds($product), // @phpstan-ignore-line
             $product
         );
 
