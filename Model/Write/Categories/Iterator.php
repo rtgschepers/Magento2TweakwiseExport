@@ -106,4 +106,21 @@ class Iterator extends EavIterator
 
         return $select;
     }
+
+
+    public function getIterator(): \Traversable
+    {
+        foreach (parent::getIterator() as $entityData) {
+            if (!$this->shouldProcess($entityData)) {
+                continue;
+            }
+
+            yield $entityData;
+        }
+    }
+
+    public function shouldProcess(array $result): bool
+    {
+        return true;
+    }
 }
