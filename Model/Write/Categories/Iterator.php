@@ -17,6 +17,7 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
+use Traversable;
 
 class Iterator extends EavIterator
 {
@@ -105,5 +106,30 @@ class Iterator extends EavIterator
         }
 
         return $select;
+    }
+
+    /**
+     * @return Traversable
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function getIterator(): Traversable
+    {
+        foreach (parent::getIterator() as $entityData) {
+            if (!$this->shouldProcess($entityData)) {
+                continue;
+            }
+
+            yield $entityData;
+        }
+    }
+
+    /**
+     * @param array $result
+     *
+     * @return bool
+     */
+    public function shouldProcess(array $result): bool
+    {
+        return true;
     }
 }
