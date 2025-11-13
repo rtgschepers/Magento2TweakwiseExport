@@ -127,6 +127,7 @@ class Iterator extends EavIterator
      * @param array $result
      *
      * @return bool
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
      */
     public function shouldProcess(array $result): bool
     {
