@@ -134,7 +134,6 @@ class Iterator extends EavIterator
         return true;
     }
 
-
     /**
      * {@inheritdoc}
      */
